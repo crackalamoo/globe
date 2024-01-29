@@ -57,7 +57,9 @@ const citym = new THREE.MeshLambertMaterial({
     alphaMap: texturecity,
     color: new THREE.Color(250, 230, 200),
     depthTest: false,
-    blending: THREE.AdditiveBlending
+    blending: THREE.AdditiveBlending,
+    // bumpMap: texturebump,
+    // bumpScale: earthRadius*0.03
 });
 const citymesh = new THREE.Mesh(mainSphere, citym);
 citymesh.layers.set(1);
@@ -126,7 +128,6 @@ scene.add(citymesh);
 scene.add(myMarker);
 // scene.add(waterMesh);
 
-//setting camera
 const camera = new THREE.PerspectiveCamera(85, window.innerWidth / window.innerHeight, 10, 20000);
 camera.position.set(1425,8000,-6160); //This is for demo
 camera.lookAt(0,0,0);
@@ -194,7 +195,7 @@ function animate() {
 // addMarker(33.703, 73.034);
 
 controls.enableKeys = false;
-controls.listenToKeyEvents(window);
+// controls.listenToKeyEvents(window);
 const dsol2023 = new Date("December 22, 2023 03:27 UTC").getTime();
 let t_sol2023 = 0;
 function setToNow() {
@@ -225,18 +226,21 @@ function handleKey(e) {
     console.log(e);
     if (e.code === 'Space') {
         playing = !playing;
-        if (!playing)
-            setToNow();
+        // if (!playing)
+            // setToNow();
     }
     if (e.code === 'KeyA') {
         console.log("looking");
         viewingMPhi = Math.PI/6;
         controls.target.set(myMarker.position.x, myMarker.position.y, myMarker.position.z);
-        // controls.object.lookAt(controls.object.position, myMarker.position, new THREE.Vector3(0,1,0));
     }
     if (e.code === 'KeyC') {
         controls.minDistance = earthRadius*1.005;
         controls.target.set(0,0,0);
+    }
+    if (e.code === 'KeyN') {
+        setToNow();
+        playing = false;
     }
 }
 document.onkeydown = handleKey;
