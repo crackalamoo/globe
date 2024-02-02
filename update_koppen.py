@@ -73,6 +73,18 @@ b = np.stack([b,b,b], axis=2)
 # b *= 255/np.max(b)
 b = b.astype(np.uint8)
 
+bd = np.array(Image.open('images/borders.png').resize((m.shape[1], int(m.shape[1]*1393/2880))).convert('RGB'))
+print(bd.shape)
+bd = bd[:,:,2]
+bd[bd == 190] = 40
+bd[bd > 40] = 40
+bd[bd < 40] = 255
+bd[bd == 40] = 0
+bd = np.pad(bd, ((m.shape[0]-bd.shape[0],0),(0,0)))
+print(bd.shape)
+bd = np.stack([bd,bd,bd], axis=2)
+bd = bd.astype(np.uint8)
+
 for i in range(data.shape[0]):
     for j in range(data.shape[1]):
         color = data[i,j,0], data[i,j,1], data[i,j,2]
@@ -141,6 +153,10 @@ im5_r.save("images/water_r.png")
 im6 = Image.fromarray(l)
 # im6.show()
 im6.save("images/city.png")
+
+im7 = Image.fromarray(bd)
+im7.show()
+im7.save("images/new_borders.png")
 
 # Image.MAX_IMAGE_PIXELS = 933120000+1
 # bm = np.array(Image.open('images/bluemarble_big.png').resize((32768,16384)).convert('RGB'))

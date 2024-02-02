@@ -27,6 +27,7 @@ const water_l = loader.load('images/water_l.png');
 const water_r = loader.load('images/water_r.png');
 const texturecity = loader.load('images/city.png');
 // textureimg.minFilter = THREE.LinearFilter;
+const borders = loader.load('images/new_borders.png');
 
 function earthMapMat(texture, bump=null, water=null) {
     const material = new THREE.MeshPhongMaterial();
@@ -37,13 +38,21 @@ function earthMapMat(texture, bump=null, water=null) {
     material.bumpScale = bump ? earthRadius*0.003 : null;
     material.specularMap = water;
     material.specular = new THREE.Color(0xeeeeee);
-    material.shininess = 5;
+    material.shininess = 3;
     material.wireframe = false;
     return material;
 }
 // const material = earthMapMat(textureimg);
 const material_l = earthMapMat(texture_l, bump_l, water_l);
 const material_r = earthMapMat(texture_r, bump_r, water_r);
+const borderMat = new THREE.MeshBasicMaterial({
+    transparent: true,
+    alphaMap: borders,
+    color: new THREE.Color(255,255,50),
+    depthTest: false,
+    blending: THREE.AdditiveBlending
+});
+const bordermesh = new THREE.Mesh(mainSphere, borderMat);
 
 const markerMat = new THREE.MeshBasicMaterial({
     color: new THREE.Color(0, 255, 1),
@@ -106,7 +115,7 @@ document.getElementById('viz').appendChild(renderer.domElement);
 
 // Setup scene
 const scene = new THREE.Scene();
-scene.add(new THREE.AmbientLight(0xffffff, 0.05));
+scene.add(new THREE.AmbientLight(0xffffff, 0.1));
 const light = new THREE.DirectionalLight(0xffffff, 1.5);
 const light2 = new THREE.DirectionalLight(0xffffff, 0.01);
 light.mapSize = (2,2);
@@ -127,6 +136,7 @@ scene.add(light2);
 scene.add(citymesh);
 scene.add(myMarker);
 // scene.add(waterMesh);
+scene.add(bordermesh);
 
 const camera = new THREE.PerspectiveCamera(85, window.innerWidth / window.innerHeight, 10, 20000);
 camera.position.set(1425,8000,-6160); //This is for demo
@@ -185,15 +195,6 @@ function animate() {
     requestAnimationFrame(animate);
 }
 
-// addMarker(26.512, -80.176);
-// addMarker(41.827, -71.400);
-// addMarker(42.381, -71.124);
-// addMarker(29.648, -82.343);
-// addMarker(41.896, -87.627);
-// addMarker(40.904, -72.380);
-// addMarker(40.767, -73.963);
-// addMarker(33.703, 73.034);
-
 controls.enableKeys = false;
 // controls.listenToKeyEvents(window);
 const dsol2023 = new Date("December 22, 2023 03:27 UTC").getTime();
@@ -241,6 +242,9 @@ function handleKey(e) {
     if (e.code === 'KeyN') {
         setToNow();
         playing = false;
+    }
+    if (e.code === 'KeyB') {
+        bordermesh.visible = !bordermesh.visible;
     }
 }
 document.onkeydown = handleKey;
