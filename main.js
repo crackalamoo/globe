@@ -53,6 +53,7 @@ const borderMat = new THREE.MeshBasicMaterial({
     blending: THREE.AdditiveBlending
 });
 const bordermesh = new THREE.Mesh(mainSphere, borderMat);
+bordermesh.visible = false;
 
 const markerMat = new THREE.MeshBasicMaterial({
     color: new THREE.Color(0, 255, 1),
@@ -86,7 +87,7 @@ function setMarker(m, lat, long, R=earthRadius) {
     m.position.set(R*Math.sin(theta)*Math.cos(phi), R*Math.cos(theta), R*Math.sin(theta)*Math.sin(phi));
     m.lookAt(0,0,0);
 }
-function addMarker(lat, long) {
+export function addMarker(lat, long) {
     let m = new THREE.Mesh(marker, markerMat);
     markers.push(m);
     setMarker(m, lat, long);
@@ -106,9 +107,7 @@ navigator.geolocation.getCurrentPosition((p) => {
 
 // Setup renderer
 const renderer = new THREE.WebGLRenderer();
-console.log(renderer.capabilities.maxTextureSize);
-renderer.capabilities.maxTextureSize *= 4;
-console.log(renderer.capabilities.maxTextureSize);
+// renderer.capabilities.maxTextureSize *= 4;
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.getElementById('viz').appendChild(renderer.domElement);
@@ -139,7 +138,7 @@ scene.add(myMarker);
 scene.add(bordermesh);
 
 const camera = new THREE.PerspectiveCamera(85, window.innerWidth / window.innerHeight, 10, 20000);
-camera.position.set(1425,8000,-6160); //This is for demo
+camera.position.set(1425,8000,-6160);
 camera.lookAt(0,0,0);
 camera.updateProjectionMatrix();
 
@@ -169,8 +168,13 @@ function animate() {
         let mZ = cameraP.z - m.position.z;
         let cameraR = Math.sqrt(mX*mX + mY*mY + mZ*mZ);
         let mScale = cameraR/earthRadius * (1+0.2*Math.cos(t/2000));
-        m.scale.set(mScale,mScale,mScale)
+        m.scale.set(mScale,mScale,mScale);
     });
+    let cameraR = Math.sqrt(cameraP.x*cameraP.x + cameraP.y*cameraP.y + cameraP.z*cameraP.z);
+    if (viewingMarker)
+        controls.rotateSpeed = 1;
+    else
+        controls.rotateSpeed = (cameraR-earthRadius*0.98)/earthRadius;
     if (viewingMPhi > Math.PI/8) {
         viewingMPhi -= 0.001+0.04*(viewingMPhi-Math.PI/8);
         viewMarker(myMarker, viewingMPhi);
@@ -201,12 +205,10 @@ const dsol2023 = new Date("December 22, 2023 03:27 UTC").getTime();
 let t_sol2023 = 0;
 function setToNow() {
     let time = Date.now() - dsol2023;
-    console.log(time);
     let years = time/(365.2422*86400*1000);
     let days = (Date.now()%(86400*1000))/(86400*1000);
     t = 86400*(days+0.5);
     t_sol2023 = t - time/1000;
-    console.log(years, (t-t_sol2023)/86400/365.2422);
     dec = -23.5*Math.cos((t-t_sol2023)/(86400*365.2422)*(2*Math.PI));
     console.log(dec);
     console.log(years);
@@ -223,21 +225,21 @@ function viewMarker(m, dphi) {
     );
 }
 let viewingMPhi = Math.PI/8;
+let viewingMarker = false;
 function handleKey(e) {
     console.log(e);
     if (e.code === 'Space') {
         playing = !playing;
-        // if (!playing)
-            // setToNow();
     }
     if (e.code === 'KeyA') {
-        console.log("looking");
         viewingMPhi = Math.PI/6;
         controls.target.set(myMarker.position.x, myMarker.position.y, myMarker.position.z);
+        viewingMarker = true;
     }
     if (e.code === 'KeyC') {
         controls.minDistance = earthRadius*1.005;
         controls.target.set(0,0,0);
+        viewingMarker = false;
     }
     if (e.code === 'KeyN') {
         setToNow();
