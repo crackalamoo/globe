@@ -10,6 +10,7 @@ Globe with three.js
 * Press A to see a close-up of your current location.
 * Press C to return to normal view centered on the globe.
 * Press N to set the simulated time to match the real time.
+* Press B to show/hide borders. (Borders are approximate.)
 * Press space to play or pause day/night motion.
 
 ## Image Sources
@@ -17,6 +18,6 @@ Globe with three.js
 * [Elevation source](https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/World_elevation_map.png/2560px-World_elevation_map.png)
 * [Blue Marble source](https://commons.wikimedia.org/wiki/File:Blue_Marble_2002.png)
 * [Night source](https://commons.wikimedia.org/wiki/File:The_earth_at_night.jpg)
-* [Borders source](https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/World_location_map_mono.svg/2560px-World_location_map_mono.svg.png)
+* [Borders source](https://commons.wikimedia.org/wiki/File:Blank_World_Map_2022.png)
 
 These raw images are placed in the `images` folder and processed by `update_koppen.py` to create the final images used by `main.js` for rendering.
