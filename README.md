@@ -21,3 +21,5 @@ Globe with three.js
 * [Borders source](https://commons.wikimedia.org/wiki/File:Blank_World_Map_2022.png)
 
 These raw images are placed in the `images` folder and processed by `update_koppen.py` to create the final images used by `main.js` for rendering.
+
+Inspired by a tutorial by [Sreehari S](https://medium.com/@sreeharikollamattam/creating-3d-interactive-earth-using-threejs-for-web-68707ecd68e1).
